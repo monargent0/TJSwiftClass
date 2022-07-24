@@ -38,16 +38,16 @@ class ViewController: UIViewController {
     
     // 이미지 뷰 함수
     func displayImg(){
-        if imageIndex == 5{
+        if imageIndex == imageName.count{
             imageIndex = 0
         }
         if imageIndex < 0{
-            imageIndex = 4
+            imageIndex = imageName.count - 1 
         }
         imgTitle.text = imageName[imageIndex]
-        prevImg.image = UIImage(named: imageName[(imageIndex+4)%5])
+        prevImg.image = UIImage(named: imageName[(imageIndex+(imageName.count-1))%imageName.count])
         imgView.image = UIImage(named: imageName[imageIndex])
-        nextImg.image = UIImage(named: imageName[(imageIndex+1)%5])
+        nextImg.image = UIImage(named: imageName[(imageIndex+1)%imageName.count])
        
     }
 }//ViewController
