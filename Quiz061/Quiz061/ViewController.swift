@@ -49,7 +49,6 @@ class ViewController: UIViewController {
         prevImg.image = UIImage(named: imageName[(imageIndex+(imageName.count-1))%imageName.count])
         imgView.image = UIImage(named: imageName[imageIndex])
         nextImg.image = UIImage(named: imageName[(imageIndex+1)%imageName.count])
-       
-    }
+    } // display
 }//ViewController
 
