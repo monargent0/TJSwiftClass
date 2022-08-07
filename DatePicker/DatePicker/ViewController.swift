@@ -8,6 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController { // multitasking (2가지 일 할거니까 CPU2개 사용) - CPU 1 : 현재시간 / CPU 2 : datePicker 선택시간
+    // CPU를 여러개 사용한다 : Async 이다. 순차적으로 작동한다 : sync. 
     // 시간은 ios가 준다. 시간을 받으려면 os와 같은 언어로 써야한다. ios는 ObjectC이다. ->  swift에서 ObjectC 사용
 
     @IBOutlet weak var lbCurrentTime: UILabel!
