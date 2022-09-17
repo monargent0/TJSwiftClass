@@ -15,8 +15,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        imgView.image = UIImage(named: Message.animalImgFile)
+        lblContent.text = "이 동물의 이름은 \(Message.animal) 이며 \n분류는 \(Message.kind)이며 \n날 수 \(Message.fly ? "있습니다" : "없습니다")"
+        
     }
     
 
