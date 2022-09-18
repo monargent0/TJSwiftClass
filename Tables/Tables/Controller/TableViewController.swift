@@ -98,9 +98,18 @@ class TableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "myCell", for: indexPath)
 
         // Configure the cell...
-        cell.textLabel?.text = dataArray[indexPath.row].items
-        cell.imageView?.image = UIImage(named: dataArray[indexPath.row].itemsImageFile )
+//        cell.textLabel?.text = dataArray[indexPath.row].items // 삭제될 예정
+//        cell.imageView?.image = UIImage(named: dataArray[indexPath.row].itemsImageFile )
         // cell 하나에 두 개의 구성이 들어가 있다.
+        
+        var content = cell.defaultContentConfiguration()
+        content.text = dataArray[indexPath.row].items
+        content.image = UIImage(named: dataArray[indexPath.row].itemsImageFile )
+        cell.contentConfiguration = content
+        // 애플이 제공하는 cell 디자인을 사용할때는
+        // 위 처럼 cell에 하나하나 구성해주는것이 아니라, content로 하나 거쳐서 cell에는 한번에 알려 주도록 바뀌었다. 22/09
+        // ios CPU가 바뀔 예정이라 그런듯
+        
         return cell
     }
     

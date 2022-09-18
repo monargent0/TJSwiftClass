@@ -20,35 +20,37 @@
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="o7F-1G-NQg">
                                 <rect key="frame" x="20" y="88" width="374" height="774"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="FON-Oe-V7f">
-                                    <size key="itemSize" width="128" height="110"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="FON-Oe-V7f">
+                                    <size key="itemSize" width="90" height="90"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="myCell" id="LbE-yf-XYz" customClass="CollectionViewCell" customModule="CollectionView_Label" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="128" height="110"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="R5w-Uo-b0B" customClass="CollectionViewCell" customModule="CollectionView_Label" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="128" height="110"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E5r-wd-PCl">
-                                                    <rect key="frame" x="43" y="45" width="42" height="21"/>
+                                                    <rect key="frame" x="24" y="35" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="E5r-wd-PCl" firstAttribute="leading" secondItem="R5w-Uo-b0B" secondAttribute="leading" constant="48" id="WJT-MS-QBu"/>
-                                                <constraint firstItem="E5r-wd-PCl" firstAttribute="top" secondItem="R5w-Uo-b0B" secondAttribute="top" constant="66" id="xiB-i8-snv"/>
+                                                <constraint firstItem="E5r-wd-PCl" firstAttribute="centerX" secondItem="R5w-Uo-b0B" secondAttribute="centerX" id="6tA-fI-qbb"/>
+                                                <constraint firstItem="E5r-wd-PCl" firstAttribute="centerY" secondItem="R5w-Uo-b0B" secondAttribute="centerY" id="EDt-YA-feA"/>
+                                                <constraint firstItem="E5r-wd-PCl" firstAttribute="top" secondItem="R5w-Uo-b0B" secondAttribute="top" constant="35" id="tGl-w6-TIO"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="128" height="110"/>
+                                        <size key="customSize" width="90" height="90"/>
                                         <connections>
-                                            <outlet property="lblHuman" destination="E5r-wd-PCl" id="gjh-D1-Ofk"/>
+                                            <outlet property="lblHuman" destination="E5r-wd-PCl" id="Op6-vB-2G8"/>
+                                            <segue destination="yeB-tX-MDa" kind="show" identifier="sgDetail" id="fmH-g1-Zdd"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -57,20 +59,97 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="o7F-1G-NQg" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="2JU-xf-L4M"/>
-                            <constraint firstItem="o7F-1G-NQg" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="BOc-Zp-Qh6"/>
-                            <constraint firstItem="o7F-1G-NQg" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="j9M-28-9R4"/>
-                            <constraint firstItem="o7F-1G-NQg" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="jwi-ZF-hsb"/>
+                            <constraint firstItem="o7F-1G-NQg" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="8R5-eH-Xpu"/>
+                            <constraint firstItem="o7F-1G-NQg" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="S4R-hi-1gm"/>
+                            <constraint firstItem="o7F-1G-NQg" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="ZZL-ll-6iI"/>
+                            <constraint firstItem="o7F-1G-NQg" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ipK-Si-Ad8"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="삼국지 인물" id="DKp-Br-xBk"/>
+                    <navigationItem key="navigationItem" title="삼국지 인물" id="DKp-Br-xBk">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="FpY-rC-8cX">
+                            <connections>
+                                <segue destination="qI1-WR-LQm" kind="show" id="eu1-JI-IlY"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
-                        <outlet property="collectionView" destination="o7F-1G-NQg" id="gQm-jk-vZh"/>
+                        <outlet property="collectionView" destination="o7F-1G-NQg" id="Dxx-cO-Grn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="939.13043478260875" y="69.642857142857139"/>
+        </scene>
+        <!--인물 보기-->
+        <scene sceneID="L0a-vB-Wy6">
+            <objects>
+                <viewController id="yeB-tX-MDa" customClass="DetailViewController" customModule="CollectionView_Label" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="NRl-y2-95y">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="인물 이름" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gay-Pb-7EG">
+                                <rect key="frame" x="20" y="438" width="374" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="aiJ-dY-iSe"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="인물 보기" id="sjv-l3-dev"/>
+                    <connections>
+                        <outlet property="lblName" destination="Gay-Pb-7EG" id="Tq0-tY-UEw"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="H0a-mZ-KyV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2057.971014492754" y="480.80357142857139"/>
+        </scene>
+        <!--인물 추가-->
+        <scene sceneID="Qbv-3b-4J2">
+            <objects>
+                <viewController id="qI1-WR-LQm" customClass="AddViewController" customModule="CollectionView_Label" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="jhB-5W-hMF">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="인물 : " textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zm8-ha-f1j">
+                                <rect key="frame" x="84" y="174" width="78" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bhy-Jd-JjB">
+                                <rect key="frame" x="170" y="167" width="161" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZS0-Me-Ksj">
+                                <rect key="frame" x="149" y="243" width="99" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="gray" title="추가"/>
+                                <connections>
+                                    <action selector="btnInsert:" destination="qI1-WR-LQm" eventType="touchUpInside" id="7vR-oT-hdB"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="WZj-bX-ZOX"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="인물 추가" id="mJi-oW-Jk6"/>
+                    <connections>
+                        <outlet property="tfHuman" destination="bhy-Jd-JjB" id="UCD-97-2SV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ngi-Aw-CmN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2057.971014492754" y="-239.0625"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ONN-bI-KvH">

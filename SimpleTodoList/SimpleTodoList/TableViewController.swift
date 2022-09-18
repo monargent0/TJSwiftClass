@@ -72,7 +72,16 @@ class TableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "myCell", for: indexPath)
 
         // Configure the cell...
-        cell.textLabel?.text = dataArray[indexPath.row]
+//        cell.textLabel?.text = dataArray[indexPath.row] // 삭제될 예정
+        
+        var content = cell.defaultContentConfiguration()
+        content.text = dataArray[indexPath.row]
+        // 위처럼 text만 여기까지 작성하면 이제는 이미지가 안보인다
+        content.image = UIImage(systemName: "pencil.tip.crop.circle")
+        // 시스템 이미지 추가
+        
+        cell.contentConfiguration = content
+        
         return cell
     }
     
