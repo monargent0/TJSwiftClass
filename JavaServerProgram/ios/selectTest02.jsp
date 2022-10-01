@@ -22,24 +22,17 @@
             String id_mysql = "root";
             String pw_mysql = "qwer1234";
 
-            // Table에 Data 넣기
-            PreparedStatement ps = null; // java.sql로 import되는 Class , sql문장 번역
-
             try{
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
                 // 위에서 선언한것들 입력하여 연결
                 Statement stmt_mysql = conn_mysql.createStatement();
 
-                String query = "select password from wtest where id = ?";
+                String query = "select password from wtest where id = '"+ userid +"'";
                 
-                // 실행
-                ps = conn_mysql.prepareStatement(query);
-                ps.setString(1, userid);
+                ResultSet rs = stmt_mysql.executeQuery(query);
 
-                ResultSet rs = ps.executeQuery();
-
-                while(rs.next() ){
+                if(rs.next() ){
                     out.println(userid + "의 Password : " + rs.getString(1));
                 }
 
