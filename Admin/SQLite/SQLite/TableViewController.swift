@@ -35,7 +35,7 @@ class TableViewController: UITableViewController {
             return // 에러가 나면 여기서 끝내야 (아무의미없는) 뒤로 안 넘어간다
         }// Table이 없으면 새로 생성, varchar가 없으므로 TEXT로 사용
         
-        // Temp Insert -- 기능 테스트 용
+        // Temp Insert -- 처음 만들때 기능 테스트 용
 //        tempInsert() // insert func
         
 //        readValues() // select func
@@ -81,11 +81,11 @@ class TableViewController: UITableViewController {
     }
     
     func readValues(){
-        studentsList.removeAll()
+        studentsList.removeAll() // 화면 내용 초기화
         let queryString = "SELECT * FROM students"
         var stmt: OpaquePointer?
         
-        // 번역 sql - swift
+        // prepare : 번역 sql 언어를 -> swift가 알 수 있게
         if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
             let errmsg = String(cString: sqlite3_errmsg(db)!)
             print("error preparing select : \(errmsg)")
@@ -169,7 +169,7 @@ class TableViewController: UITableViewController {
             return
         }
         // 첫번째에 데이터 입력 (sname)
-        sqlite3_bind_int(stmt, 1, Int32(id))
+        sqlite3_bind_int(stmt, 1, Int32(id)) // sqlite는 c언어 기반이라 int가 32bit가 최대이다
         
         if sqlite3_step(stmt) != SQLITE_DONE{
             let errmsg = String(cString: sqlite3_errmsg(db)!)

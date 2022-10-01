@@ -6,29 +6,102 @@
 //
 
 import UIKit
+import SQLite3 // *****
 
 class TableViewController: UITableViewController {
 
     @IBOutlet var tvListView: UITableView!
     
+    // DB 데이터포인터 선언
+    var db: OpaquePointer?
+    
     // Todo 내용
-    var dataArray : [String] = []
+    typealias todo = (id : Int , content : String )
+    var todoData : [todo] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataInit() // 초기데이터
+        // 초기 test
+        tempInsert()
+        readValues()
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
+        // SQLite 생성하기
+        let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("SimpleTodoData.sqlite")
+        // .appending(path:"SimpleTodoData.sqlite") // 새로 업데이트 appendingPathComponent 삭제될 예정이라 바꿔야함
+        
+        if sqlite3_open(fileURL.path, &db) != SQLITE_OK{
+            print("error opening database")
+        }
+        
+        if sqlite3_exec(db,
+                        "CREATE TABLE IF NOT EXISTS todos (sid INTEGER PRIMARY KEY AUTOINCREMENT, scontent TEXT)", nil, nil, nil) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)) // error message
+            print("error creating table \(errmsg)")
+            return
+        }// Table이 없으면 새로 생성
         
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
          self.navigationItem.leftBarButtonItem = self.editButtonItem
     }
     
-    func dataInit(){
-        dataArray.append("간단한 메모를 기록해 봅시다.")
-        dataArray.append("오른쪽 상단의 + 버튼을 눌러보세요!")
+    // 화면 다시 실행
+    override func viewWillAppear(_ animated: Bool) {
+        readValues()
     }
+    
+    //-
+    func tempInsert(){
+        // errmsg는 실행이 잘 되는 것을 확인하면 없앤다.
+        var stmt: OpaquePointer? // statement 글자 queryString과 연결(짝꿍)
+        let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self) // 한글 체크 변형
+        
+        let queryString = "INSERT INTO todos (scontent) VALUES (?)"
+        // 번역
+        if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("error preparing insert : \(errmsg)")
+            return
+        }
+        // 데이터 입력
+        sqlite3_bind_text(stmt, 1, "간단한 메모를 기록해 봅시다.", -1, SQLITE_TRANSIENT)
+        
+        if sqlite3_step(stmt) != SQLITE_DONE{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure inserting : \(errmsg)")
+            return
+        }
+        
+        print("Students saved successfully")
+        
+    } //
+    
+    func readValues(){
+        todoData.removeAll() // 화면 내용 초기화
+        let queryString = "SELECT * FROM todos"
+        var stmt: OpaquePointer?
+        
+        // prepare : 번역 sql 언어를 -> swift가 알 수 있게
+        if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("error preparing select : \(errmsg)")
+            return
+        }
+        // 데이터가 있는만큼 넘어오게 될것 (갯수 모름)
+        while(sqlite3_step(stmt) == SQLITE_ROW){ // 데이터 갯수 만큼 반복
+            let id = sqlite3_column_int(stmt, 0) // select 되는 첫번째 데이터
+            // sqlite는 c로 구성되어 있어 cstring 타입이다. swift string으로 변환이 필요하다.
+            let content = String(cString: sqlite3_column_text(stmt, 1))
+            
+            print(id, content)
+            todoData.append( todo(id:Int(id) ,content: content) )
+        }
+        
+        self.tvListView.reloadData()
+    }//-
+    
     
     // 추가 버튼
     @IBAction func btnAdd(_ sender: UIBarButtonItem) {
@@ -37,16 +110,34 @@ class TableViewController: UITableViewController {
         addAlert.addTextField{ ACTION in //  closure
             ACTION.placeholder = "추가 내용"
         }
-        // 여러개 사용할 수 있다
-//        addAlert.addTextField{ userId in //  closure
-//            userId.placeholder = "아이디"
-//        }
-//        addAlert.addTextField{ password in //  closure
-//            password.placeholder = "비밀번호"
-//        }
+
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         let okAction = UIAlertAction(title: "추가", style: .default, handler: {ACTION in
-            self.dataArray.append(addAlert.textFields![0].text!)
+            var stmt: OpaquePointer? // statement 글자 queryString과 연결(짝꿍)
+            let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self) // 한글
+            
+            // 사용자 입력값
+            let content = addAlert.textFields![0].text?.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            let queryString = "INSERT INTO todos (scontent) VALUES (?)"
+            
+            // 번역
+            if sqlite3_prepare(self.db, queryString, -1, &stmt, nil) != SQLITE_OK{
+                let errmsg = String(cString: sqlite3_errmsg(self.db)!)
+                print("error preparing insert : \(errmsg)")
+                return
+            }
+            
+            // ?에 데이터 입력
+            sqlite3_bind_text(stmt, 1, content , -1, SQLITE_TRANSIENT)
+            
+            
+            if sqlite3_step(stmt) != SQLITE_DONE{
+                let errmsg = String(cString: sqlite3_errmsg(self.db)!)
+                print("failure inserting : \(errmsg)")
+                return
+            }
+            
             self.tvListView.reloadData()
         })
         
@@ -64,7 +155,7 @@ class TableViewController: UITableViewController {
     // 열 갯수
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return dataArray.count
+        return todoData.count
     }
 
     
@@ -75,7 +166,7 @@ class TableViewController: UITableViewController {
 //        cell.textLabel?.text = dataArray[indexPath.row] // 삭제될 예정
         
         var content = cell.defaultContentConfiguration()
-        content.text = dataArray[indexPath.row]
+        content.text = todoData[indexPath.row].content
         // 위처럼 text만 여기까지 작성하면 이제는 이미지가 안보인다
         content.image = UIImage(systemName: "pencil.tip.crop.circle")
         // 시스템 이미지 추가
@@ -96,24 +187,24 @@ class TableViewController: UITableViewController {
 
     // 셀 삭제
     // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            dataArray.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
+//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        if editingStyle == .delete {
+//            // Delete the row from the data source
+//            dataArray.remove(at: indexPath.row)
+//            tableView.deleteRows(at: [indexPath], with: .fade)
+//        } else if editingStyle == .insert {
+//            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+//        }
+//    }
     
 
     // 목록 이동
     // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-        let itemToMove = dataArray[fromIndexPath.row]
-        dataArray.remove(at: fromIndexPath.row)
-        dataArray.insert(itemToMove, at: to.row)
-    }
+//    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+//        let itemToMove = dataArray[fromIndexPath.row]
+//        dataArray.remove(at: fromIndexPath.row)
+//        dataArray.insert(itemToMove, at: to.row)
+//    }
     
 
     /*

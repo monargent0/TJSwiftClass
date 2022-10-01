@@ -42,7 +42,8 @@ class DetailViewController: UIViewController {
     
     @IBAction func btnUpdate(_ sender: UIButton) {
         var stmt: OpaquePointer? // statement 글자 queryString과 연결(짝꿍)
-        let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self) // 한글 체크 변형
+        let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self) // 한글 체크 변형, 아시아권 언어 모두 사용,
+        // mac에서 개발할때는 utf-8로 설정되어있다. 안드로이드 윈도우 환경에서 번갈아 개발하면 한글코드가 달라 한글이 깨질 수 있다.
         
         // 기존 데이터
         let id = Int32(receivedID)
