@@ -16,18 +16,30 @@ class TableViewController: UITableViewController {
     var db: OpaquePointer?
     
     // Todo 내용
-    typealias todo = (id : Int , content : String )
-    var todoData : [todo] = []
+    typealias Todo = (id : Int , content : String )
+    var todoData : [Todo] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // 초기 test
-        tempInsert()
-        readValues()
-        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
+        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+         self.navigationItem.leftBarButtonItem = self.editButtonItem
+        
+        createTable()
+        // 초기 test
+//        tempInsert()
+//        readValues()
+    }
+    
+    // 화면 다시 실행
+    override func viewWillAppear(_ animated: Bool) {
+        readValues()
+    }
+    
+    //-
+    func createTable(){
         // SQLite 생성하기
         let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("SimpleTodoData.sqlite")
         // .appending(path:"SimpleTodoData.sqlite") // 새로 업데이트 appendingPathComponent 삭제될 예정이라 바꿔야함
@@ -37,28 +49,20 @@ class TableViewController: UITableViewController {
         }
         
         if sqlite3_exec(db,
-                        "CREATE TABLE IF NOT EXISTS todos (sid INTEGER PRIMARY KEY AUTOINCREMENT, scontent TEXT)", nil, nil, nil) != SQLITE_OK{
+                        "CREATE TABLE IF NOT EXISTS todo (sid INTEGER PRIMARY KEY AUTOINCREMENT, scontent TEXT)", nil, nil, nil) != SQLITE_OK{
             let errmsg = String(cString: sqlite3_errmsg(db)) // error message
             print("error creating table \(errmsg)")
             return
         }// Table이 없으면 새로 생성
         
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-         self.navigationItem.leftBarButtonItem = self.editButtonItem
-    }
+    }//
     
-    // 화면 다시 실행
-    override func viewWillAppear(_ animated: Bool) {
-        readValues()
-    }
-    
-    //-
     func tempInsert(){
         // errmsg는 실행이 잘 되는 것을 확인하면 없앤다.
         var stmt: OpaquePointer? // statement 글자 queryString과 연결(짝꿍)
         let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self) // 한글 체크 변형
         
-        let queryString = "INSERT INTO todos (scontent) VALUES (?)"
+        let queryString = "INSERT INTO todo (scontent) VALUES (?)"
         // 번역
         if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
             let errmsg = String(cString: sqlite3_errmsg(db)!)
@@ -80,7 +84,7 @@ class TableViewController: UITableViewController {
     
     func readValues(){
         todoData.removeAll() // 화면 내용 초기화
-        let queryString = "SELECT * FROM todos"
+        let queryString = "SELECT * FROM todo"
         var stmt: OpaquePointer?
         
         // prepare : 번역 sql 언어를 -> swift가 알 수 있게
@@ -96,7 +100,7 @@ class TableViewController: UITableViewController {
             let content = String(cString: sqlite3_column_text(stmt, 1))
             
             print(id, content)
-            todoData.append( todo(id:Int(id) ,content: content) )
+            todoData.append( Todo(id: Int(id) , content: content) )
         }
         
         self.tvListView.reloadData()
@@ -112,38 +116,46 @@ class TableViewController: UITableViewController {
         }
 
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
         let okAction = UIAlertAction(title: "추가", style: .default, handler: {ACTION in
-            var stmt: OpaquePointer? // statement 글자 queryString과 연결(짝꿍)
-            let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self) // 한글
-            
-            // 사용자 입력값
-            let content = addAlert.textFields![0].text?.trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            let queryString = "INSERT INTO todos (scontent) VALUES (?)"
-            
-            // 번역
-            if sqlite3_prepare(self.db, queryString, -1, &stmt, nil) != SQLITE_OK{
-                let errmsg = String(cString: sqlite3_errmsg(self.db)!)
-                print("error preparing insert : \(errmsg)")
+            if addAlert.textFields![0].text?.isEmpty == true {
                 return
             }
-            
-            // ?에 데이터 입력
-            sqlite3_bind_text(stmt, 1, content , -1, SQLITE_TRANSIENT)
-            
-            
-            if sqlite3_step(stmt) != SQLITE_DONE{
-                let errmsg = String(cString: sqlite3_errmsg(self.db)!)
-                print("failure inserting : \(errmsg)")
-                return
-            }
-            
-            self.tvListView.reloadData()
+            self.insertAction(addAlert.textFields![0].text!)
+            self.readValues()
         })
         
         addAlert.addAction(cancelAction)
         addAlert.addAction(okAction)
         present(addAlert, animated: true , completion: nil)
+    }
+    
+    func insertAction(_ tfContent: String){
+        var stmt: OpaquePointer? // statement 글자 queryString과 연결(짝꿍)
+        let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self) // 한글
+        
+        // 사용자 입력값
+        let content = tfContent.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        let queryString = "INSERT INTO todo (scontent) VALUES (?)"
+        
+        // 번역
+        if sqlite3_prepare(self.db, queryString, -1, &stmt, nil) != SQLITE_OK{
+            let errmsg = String(cString: sqlite3_errmsg(self.db)!)
+            print("error preparing insert : \(errmsg)")
+            return
+        }
+        
+        // ?에 데이터 입력
+        sqlite3_bind_text(stmt, 1, content , -1, SQLITE_TRANSIENT)
+        
+        
+        if sqlite3_step(stmt) != SQLITE_DONE{
+            let errmsg = String(cString: sqlite3_errmsg(self.db)!)
+            print("failure inserting : \(errmsg)")
+            return
+        }
+        
     }
     
     // MARK: - Table view data source
@@ -187,23 +199,46 @@ class TableViewController: UITableViewController {
 
     // 셀 삭제
     // Override to support editing the table view.
-//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            // Delete the row from the data source
-//            dataArray.remove(at: indexPath.row)
-//            tableView.deleteRows(at: [indexPath], with: .fade)
-//        } else if editingStyle == .insert {
-//            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-//        }
-//    }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Delete the row from the data source
+            let id = todoData[indexPath.row].id
+            
+            deleteAction(id)
+            readValues()
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }
+    }
     
-
+    // 삭제 func
+    func deleteAction(_ id:Int){
+        var stmt: OpaquePointer? // statement 글자 queryString과 연결(짝꿍)
+        
+        let queryString = "DELETE FROM todo WHERE sid = ?"
+        
+        // 번역
+        if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
+            // 여기서 -1은 쿼리문의 용량 제한이 없다는 뜻이다
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("error preparing delete : \(errmsg)")
+            return
+        }
+        // 첫번째에 데이터 입력 (sname)
+        sqlite3_bind_int(stmt, 1, Int32(id)) // sqlite는 c언어 기반이라 int가 32bit가 최대이다
+        
+        if sqlite3_step(stmt) != SQLITE_DONE{
+            let errmsg = String(cString: sqlite3_errmsg(db)!)
+            print("failure deleting : \(errmsg)")
+            return
+        }
+        
+    }//
+    
     // 목록 이동
     // Override to support rearranging the table view.
 //    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-//        let itemToMove = dataArray[fromIndexPath.row]
-//        dataArray.remove(at: fromIndexPath.row)
-//        dataArray.insert(itemToMove, at: to.row)
+//
 //    }
     
 
